@@ -5,7 +5,7 @@
 {{-- Page title & Title Right --}}
 <div class="page-title">
 	<div class="title_left">
-		<h3>Welcome to Devless</h3>
+		<h3>App Panel</h3>
 	</div>
 
 	<div class="title_right">
@@ -33,8 +33,8 @@
 				<div class="x_content">
 					<form action="{{ route('app.update') }}" class="form-horizontal" method="POST">
 						<div class="form-group @if($errors->has('username')) has-error @endif" >
-							<label for="username" class="col-lg-2 col-sm-2 control-label">Username</label>
-							<div class="col-lg-10">
+							<label for="username" class="col-md-4 col-sm-4 col-xs-12 control-label">Username</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="text" id="username-field" name="username" class="form-control" value="{{ $user->username }}" required="">
 								@if($errors->has("username"))
 								<span class="help-block">{{ $errors->first("username") }}</span>
@@ -42,8 +42,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('email')) has-error @endif" >
-							<label for="email" class="col-lg-2 col-sm-2 control-label">Email</label>
-							<div class="col-lg-10">
+							<label for="email" class="col-md-4 col-sm-4 col-xs-12 control-label">Email</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="email" id="email-field" name="email" class="form-control" value="{{ $user->email }}" required="">
 								@if($errors->has("email"))
 								<span class="help-block">{{ $errors->first("email") }}</span>
@@ -51,8 +51,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('name')) has-error @endif" >
-							<label for="name" class="col-lg-2 col-sm-2 control-label">App Name</label>
-							<div class="col-lg-10">
+							<label for="name" class="col-md-4 col-sm-4 col-xs-12 control-label">App Name</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="text" id="name-field" name="name" class="form-control" value="{{ $app->name }}" required="">
 								@if($errors->has("name"))
 								<span class="help-block">{{ $errors->first("name") }}</span>
@@ -60,8 +60,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('name')) has-error @endif">
-							<label for="description-field" class="col-lg-2 col-sm-2 control-label">Description</label>
-							<div class="col-lg-10">
+							<label for="description-field" class="col-md-4 col-sm-4 col-xs-12 control-label">Description</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<textarea class="form-control" id="description-field" rows="3" name="description">{{ $app->description }}</textarea>
 								@if($errors->has("description"))
 								<span class="help-block">{{ $errors->first("description") }}</span>
@@ -70,14 +70,14 @@
 						</div>
 						<div class="form-group @if($errors->has('token')) has-error @endif">
 
-							<label for="token-field" class="col-lg-2 col-sm-2 control-label">Token</label>
-							<div class="col-lg-10">
+							<label for="token-field" class="col-md-4 col-sm-4 col-xs-12 control-label">Token</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<div class="input-group m-b-10" >
 									<input type="text" id="token" readonly value="{{$app->token}}" class="form-control">
 									<span class="input-group-btn">
 										<input type="hidden" name="_method" value="PUT">
 										<input type="hidden" name="_token" value="{{ csrf_token() }}">
-										<button class="btn btn-white" onclick="update_token()" type="button">Regenerate Token</button>
+										<button class="btn btn-primary" onclick="update_token()" type="button"><i class="fa fa-refresh"></i> Regenerate</button>
 									</span>
 								</div>
 								@if($errors->has("token"))
@@ -86,8 +86,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('password')) has-error @endif" >
-							<label for="password" class="col-lg-2 col-sm-2 control-label">Password</label>
-							<div class="col-lg-10">
+							<label for="password" class="col-md-4 col-sm-4 col-xs-12 control-label">Password</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="password" id="password-field" name="password" class="form-control">
 								@if($errors->has("password"))
 								<span class="help-block">{{ $errors->first("password") }}</span>
@@ -95,8 +95,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('password_confirmation')) has-error @endif" >
-							<label for="password_confirmation" class="col-lg-2 col-sm-2 control-label">Password Confirmation</label>
-							<div class="col-lg-10">
+							<label for="password_confirmation" class="col-md-4 col-sm-4 col-xs-12 control-label">Password Confirmation</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="password" id="password_confirmation-field" name="password_confirmation" class="form-control">
 								@if($errors->has("password_confirmation"))
 								<span class="help-block">{{ $errors->first("password_confirmation") }}</span>
@@ -104,8 +104,8 @@
 							</div>
 						</div>
 						<div class="form-group @if($errors->has('old_password')) has-error @endif" >
-							<label for="old_password" class="col-lg-2 col-sm-2 control-label">Old Password</label>
-							<div class="col-lg-10">
+							<label for="old_password" class="col-md-4 col-sm-4 col-xs-12 control-label">Old Password</label>
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<input type="password" id="old_password-field" name="old_password" class="form-control" required="">
 								@if($errors->has("old_password"))
 								<span class="help-block">{{ $errors->first("old_password") }}</span>
@@ -113,8 +113,9 @@
 							</div>
 						</div>
 
+						<div class="ln_solid"></div>
 						<div class="form-group">
-							<div class="col-lg-offset-2 col-lg-10">
+							<div class="text-center col-md-4 col-sm-4 col-xs-12 col-md-offset-4 col-sm-offset-4">
 								<!-- Button trigger modal -->
 								<button type="button" class="btn btn-info  pull-left" data-toggle="modal" data-target="#connect-to-app">
 									<i class="fa fa-plug"></i>
@@ -152,9 +153,9 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="web">
 						<pre>
-							<code class="language-markup"><xmp style="word-wrap: break-word;
-								">
-								<script src="{{URL::to('/')}}/js/devless-sdk.js" class="devless-connection" devless-con-token="{{$app->token}}"></script>
+							<code class="language-markup"><xmp style="margin-bottom: -25px; margin-left: 10px; margin-right: 10px; margin-top: -40px; overflow-wrap: break-word; white-space: pre-wrap;">
+
+<script src="{{URL::to('/')}}/js/devless-sdk.js" class="devless-connection" devless-con-token="{{$app->token}}"></script>
 
 							</xmp></code></pre>
 
