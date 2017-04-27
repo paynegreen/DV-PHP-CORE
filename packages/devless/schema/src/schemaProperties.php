@@ -18,15 +18,7 @@ trait schemaProperties
         'reference' => 'integer',
         'base64' => 'binary',
     ];
-    public $query_params = [
-        'order' => 'orderBy',
-        'where' => 'where',
-        'orWhere' => 'orWhere',
-        'take' => 'take',
-        'relation' => 'relation',
-        'search' => 'search',
-        'randomize' => 'randomize',
-    ];
+
     public $dbActionAssoc = [
         'GET' => 'query',
         'POST' => 'create',

@@ -8,6 +8,7 @@ use App\Helpers\Response as Response;
 
 trait queryData
 {
+    use queryParamList;
     /**
      * query a table.
      *
@@ -36,60 +37,17 @@ trait queryData
 
             $base_query = '$db->table("'.$table_name.'")';
 
-            $complete_query = $base_query;
-            $query_params = [
-                'offset' => function () use (&$complete_query, &$payload) {
-                    $complete_query =
-                        $complete_query.'->skip('.$payload['params']['offset'][0].')';
-                },
-
-                'size' => function () use (&$complete_query, &$payload, &$size_count) {
-                    $complete_query = $complete_query
-                        .'->take('.$payload['params']['size'][0].')';
-                    $size_count = $payload['params']['size'][0];
-                },
-
-                'related' => function () use (&$complete_query, &$payload, &$queried_table_list) {
-                    $queried_table_list = $payload['params']['related'];
-                    unset($payload['params']['related']);
-                },
-
-                'orderBy' => function () use (&$complete_query, &$payload) {
-                    $complete_query = $complete_query
-                        .'->orderBy("'.$payload['params']['orderBy'][0].'" )';
-                    unset($payload['params']['orderBy']);
-                },
-
-                'randomize' => function () use (&$complete_query, &$payload) {
-                    $complete_query = $complete_query
-                        .'->orderByRaw("RAND()")';
-                    unset($payload['params']['randomize']);
-                },
-                'search' => function () use (&$complete_query, &$payload) {
-                    $split_query = explode(',', $payload['params']['search'][0]);
-                    $search_key = $split_query[0];
-                    $search_words = explode(' ', $split_query[1]);
-                    foreach ($search_words as $search_word) {
-                        $complete_query = $complete_query.'->orWhere("'.$search_key.'","LIKE","%'.$search_word.'%")';
-                    }
-                    unset($payload['params']['search']);
-                },
-            ];
-            unset($payload['params']['table']);
-            foreach ($payload['params'] as $param_name => $param_value) {
-                (isset($query_params[$param_name])) ? $query_params[$param_name]() : '';
-            }
-
-            unset(
-                $payload['params']['table'],
-                $payload['params']['size'],
-                $payload['params']['offset']
+            $complete_query = $this->set_query_options(
+                $base_query,
+                $payload,
+                $size_count,
+                $queried_table_list
             );
 
             ($payload['user_id'] !== '') ?
-                $complete_query = $complete_query.'->where("devless_user_id",'.$payload['user_id'].')' : '';
+            $complete_query = $complete_query.'->where("devless_user_id",'.$payload['user_id'].')' : '';
 
-            //finally loop over remaining query params (where)
+        //finally loop over remaining query params (where)
             foreach ($payload['params'] as $key => $query) {
                 foreach ($query as $one) {
                     //prepare query for order and where
@@ -97,8 +55,8 @@ trait queryData
                         $query_params = explode(',', $one);
                         if (isset($query_params[1], $query_params[0])) {
                             $complete_query = $complete_query.
-                                '->'.$this->query_params[$key].'("'.$query_params[0].
-                                '","'.$query_params[1].'")';
+                            '->'.$this->query_params[$key].'("'.$query_params[0].
+                            '","'.$query_params[1].'")';
                         } else {
                             Helper::interrupt(612);
                         }
@@ -120,9 +78,9 @@ trait queryData
                 $endOutput = [];
 
                 $complete_query = $complete_query.'
-                    ->chunk($count, function($results) use (&$endOutput, $related) {
-                        $endOutput =  $related($results);
-                    });';
+                ->chunk($count, function($results) use (&$endOutput, $related) {
+                    $endOutput =  $related($results);
+                });';
             } else {
                 $complete_query = 'return '.$complete_query.'->get();';
             }
@@ -135,5 +93,23 @@ trait queryData
         } else {
             Helper::interrupt(611);
         }
+    }
+
+    private function set_query_options(&$complete_query, &$payload, &$size_count, &$queried_table_list)
+    {
+        $query_args_list = [
+                'related' => [&$complete_query, &$payload, &$queried_table_list],
+                'size' => [&$complete_query, &$payload, &$size_count],
+        ];
+
+        unset($payload['params']['table']);
+        foreach ($payload['params'] as $param_name => $param_value) {
+            $query_args = ($param_name != 'related' || $param_name != 'related') ? [&$complete_query, &$payload] : $query_args_list[$param_name];
+            call_user_func_array([$this, $param_name], $query_args);
+        }
+
+        unset($payload['params']['table'], $payload['params']['size'], $payload['params']['offset']);
+
+        return $complete_query;
     }
 }
