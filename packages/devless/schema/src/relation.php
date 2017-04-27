@@ -40,7 +40,8 @@ trait relation
                         'email',
                         'phone_number',
                         'status',
-                        'phone_number'
+                        'phone_number',
+                        'role'
                     )
                     ->get();
                 $eachResult->related[$table] = $relatedData;
