@@ -8,8 +8,7 @@ use Response as output;
 use Session;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Validator;
-use App\Helpers\Jwt;
-use App\Helpers\Response as Response;
+
 /*
  * @author eddymens <eddymens@devless.io>
 *composed of most common used classes and functions
@@ -85,7 +84,6 @@ class Helper
             }
             $check_against = self::$validator_type[$check_against];
         }
-
 
         $state = Validator::make(
             [$field_name => $field_value],
@@ -163,7 +161,9 @@ class Helper
 
     /**
      * Get authenticated user cred.
+     *
      * @param $access_state
+     *
      * @return array
      */
     public static function get_authenticated_user_cred($access_state)
@@ -180,7 +180,7 @@ class Helper
             if (isset($user_data->id)) {
                 $user_cred =
                     [
-                        'id'    => $user_data->id,
+                        'id' => $user_data->id,
                         'token' => $user_data->session_token,
 
                     ];
@@ -228,8 +228,6 @@ class Helper
             $user_data->session_time = self::session_timestamp();
             $user_data->save();
         }
-
-
 
         return $user_data;
     }

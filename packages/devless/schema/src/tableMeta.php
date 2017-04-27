@@ -3,46 +3,48 @@
 namespace Devless\Schema;
 
 use App\Helpers\Helper;
-use Illuminate\Http\Request;
-use App\Helpers\Response as Response;
-use App\Http\Controllers\ServiceController as Service;
-use Illuminate\Database\Schema\Blueprint as Blueprint;
 
-trait tableMeta {
-
+trait tableMeta
+{
     /**
      *Set table meta.
+     *
      *@param $service_name
      *@param $schema
-     *@return array
      *
+     *@return array
      */
     public function set_table_meta($service_name, $schema)
     {
         \DB::table('table_metas')->insert(['schema' => json_encode($schema),
             'table_name' => $service_name.'_'.$schema['name'], 'service_id' => $schema['id'], ]);
+
         return true;
     }
 
     /**
-     * Update table meta
+     * Update table meta.
+     *
      * @param $service_name
      * @param $schema
+     *
      * @return bool
      */
     public function update_table_meta($service_name, $tableName, $schema)
     {
         if (\DB::table('table_metas')->where('table_name', $service_name.'_'.$tableName)
-            ->update(['schema'=>json_encode($schema['schema']), 'table_name'=>$schema['table_name']])) {
+            ->update(['schema' => json_encode($schema['schema']), 'table_name' => $schema['table_name']])) {
             return true;
         }
+
         return false;
     }
     /**
      *Get table meta.
-     * @param $table_name
-     * @return array
      *
+     * @param $table_name
+     *
+     * @return array
      */
     public function get_tableMeta($table_name)
     {
@@ -50,9 +52,10 @@ trait tableMeta {
         where('table_name', $table_name)->first();
         $tableMeta = json_decode(json_encode($tableMeta), true);
         $tableMeta['schema'] = json_decode($tableMeta['schema'], true);
+
         return $tableMeta;
     }
-   
+
     /**
      * check if field exist.
      *
@@ -72,11 +75,9 @@ trait tableMeta {
         if (strtolower($field['field_type']) == 'reference') {
             if (!\Schema::connection('DYNAMIC_DB_CONFIG')->
             hasTable($field['ref_table'])) {
-                //
                 Helper::interrupt(601, 'referenced table '
                     .$field['ref_table'].' does not exist');
             }
         }
     }
-    
 }

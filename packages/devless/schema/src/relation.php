@@ -3,23 +3,23 @@
 namespace Devless\Schema;
 
 use App\Helpers\Helper;
-use Illuminate\Http\Request;
-use App\Helpers\Response as Response;
 use App\Http\Controllers\ServiceController as Service;
-use Illuminate\Database\Schema\Blueprint as Blueprint;
 
-trait relation {
-	 /**
-     * get related tables
+trait relation
+{
+    /**
+     * get related tables.
+     *
      * @param $payload
      * @param $results
      * @param $primaryTable
+     *
      * @return array
      */
     private function _get_related_data($payload, $results, $primaryTable, $tables)
     {
         $serviceTables = $this->_get_all_service_tables($payload);
-        $tables = (in_array("*", $tables))?
+        $tables = (in_array('*', $tables)) ?
             $this->_get_all_related_tables($primaryTable) : $tables;
         $output = [];
         $service = $payload['service_name'];
@@ -27,12 +27,12 @@ trait relation {
         foreach ($results as $eachResult) {
             $eachResult->related = [];
             array_walk($tables, function ($table) use ($eachResult, &$output, $service) {
-                $refTable = ($table != '_devless_users')? $service.'_'.$table : 'users';
+                $refTable = ($table != '_devless_users') ? $service.'_'.$table : 'users';
                 $refField = $refTable.'_id';
-                $referenceId = (isset($eachResult->$refField))? $eachResult->$refField:
+                $referenceId = (isset($eachResult->$refField)) ? $eachResult->$refField :
                     Helper::interrupt(640);
-                $relatedData = ($table != '_devless_users')?  \DB::table($refTable)->where('id', $referenceId)
-                    ->get(): \DB::table($refTable)->where('id', $referenceId)
+                $relatedData = ($table != '_devless_users') ? \DB::table($refTable)->where('id', $referenceId)
+                    ->get() : \DB::table($refTable)->where('id', $referenceId)
                     ->select(
                         'username',
                         'first_name',
@@ -47,23 +47,26 @@ trait relation {
             });
             array_push($output, $eachResult);
         }
+
         return $output;
     }
     /**
      *Get all related tables for a service.
+     *
      *@param $stableName
+     *
      *@return array
      */
     private function _get_all_related_tables($tableName)
     {
         $relatedTables = [];
         $schema = $this->get_tableMeta($tableName);
-        array_walk($schema['schema']['field'], function ($field)
- use ($tableName, &$relatedTables) {
+        array_walk($schema['schema']['field'], function ($field) use ($tableName, &$relatedTables) {
             if ($field['field_type'] == 'reference') {
                 array_push($relatedTables, $field['ref_table']);
             }
         });
+
         return $relatedTables;
     }
     private function _get_all_service_tables($payload)
@@ -71,6 +74,7 @@ trait relation {
         $serviceId = $payload['id'];
         $tables = \DB::table('table_metas')
             ->where('service_id', $serviceId)->get();
+
         return $tables;
     }
 }

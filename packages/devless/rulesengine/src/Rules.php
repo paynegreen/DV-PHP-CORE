@@ -1,8 +1,10 @@
 <?php
 namespace Devless\RulesEngine;
+
 use App\Helpers\Helper;
 use App\Helpers\ActionClass;
 use App\Helpers\DevlessHelper;
+
 class Rules
 {
     private $assertion = [

@@ -2,8 +2,9 @@
 
 namespace App\Helpers;
 
-trait messageStack {
-  /**
+trait messageStack
+{
+    /**
      * application message/error heap.
      *
      * @var type
@@ -60,7 +61,6 @@ trait messageStack {
         700 => 'Internal system error',
     ];
 
-
     /**
      * convert soft types to validator rules.
      *
@@ -68,19 +68,18 @@ trait messageStack {
      */
     public static $validator_type =
     [
-        'boolean'    => 'boolean',
-        'decimals'   => 'numeric',
-        'email'      => 'email',
-        'integer'    => 'integer',
-        'password'   => 'alphanum',
+        'boolean' => 'boolean',
+        'decimals' => 'numeric',
+        'email' => 'email',
+        'integer' => 'integer',
+        'password' => 'alphanum',
         'percentage' => 'integer',
-        'reference'  => 'integer',
-        'text'       => 'string',
-        'textarea'   => 'string',
-        'timestamp'  => 'integer',
-        'url'        => 'url',
-        'base64'     => 'alphanum',
+        'reference' => 'integer',
+        'text' => 'string',
+        'textarea' => 'string',
+        'timestamp' => 'integer',
+        'url' => 'url',
+        'base64' => 'alphanum',
 
     ];
-
 }

@@ -3,14 +3,10 @@
 namespace Devless\Schema;
 
 use App\Helpers\Helper;
-use Illuminate\Http\Request;
-use App\Helpers\Response as Response;
-use App\Http\Controllers\ServiceController as Service;
-use Illuminate\Database\Schema\Blueprint as Blueprint;
 
-trait columns {
-
-	 /**
+trait columns
+{
+    /**
      * check column constraints.
      *
      * @param column fields (array) $field
@@ -20,11 +16,11 @@ trait columns {
     public function check_column_constraints($field)
     {
         //create column with default and reference
-         if($field['field_type'] == 'reference') {
-            return ($field['default'] == null)? 3 : 4;
-        } 
-        return ($field['default'] == null)? 1 : 2;
-  
+        if ($field['field_type'] == 'reference') {
+            return ($field['default'] == null) ? 3 : 4;
+        }
+
+        return ($field['default'] == null) ? 1 : 2;
     }
     /**
      * generate column data query .
@@ -43,33 +39,25 @@ trait columns {
             $unique = 'unique';
         }
         if ($column_type == 4) {
-
             $table->$db_type[$field['field_type']]($field['ref_table'].'_id')
                 ->unsigned()->$unique();
-            
+
             $table->foreign($field['ref_table'].'_id')->references('id')
                 ->on($field['ref_table'])->onDelete('cascade');
-        
         } elseif ($column_type == 3) {
-        
             $table->$db_type[$field['field_type']]($field['ref_table'].'_id')
                 ->unsigned()->$unique();
-        
+
             $table->foreign($field['ref_table'].'_id')->references('id')
                 ->on($field['ref_table'])->default($field['default'])
                 ->onDelete('cascade');
-        
         } elseif ($column_type == 2) {
-        
             $table->$db_type[$field['field_type']]
             ($field['name'])->default($field['default'])->onDelete('cascade')
                 ->$unique();
-        
         } elseif ($column_type == 1) {
-        
             $table->{$db_type[$field['field_type']]}
             ($field['name'])->onDelete('cascade')->$unique();
-        
         } else {
             Helper::interrupt(
                 602,

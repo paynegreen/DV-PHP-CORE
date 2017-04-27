@@ -1,16 +1,12 @@
 <?php
 
-
 namespace Devless\Schema;
 
-use App\Helpers\Helper;
 use Illuminate\Http\Request;
-use App\Helpers\Response as Response;
-use App\Http\Controllers\ServiceController as Service;
-use Illuminate\Database\Schema\Blueprint as Blueprint;
 
-trait connector {
-	 /**
+trait connector
+{
+    /**
      * Devless database connection socket.
      *
      * @param $driver
@@ -37,14 +33,14 @@ trait connector {
             $database = database_path('devless-rec.sqlite3');
         }
         $conn = [
-            'driver'    => $driver,
-            'host'      => $host,
-            'database'  => $database,
-            'username'  => $username,
-            'password'  => $password,
-            'charset'   => $charset,
-            'prefix'    => $prefix,
-            'port'      => $port,
+            'driver' => $driver,
+            'host' => $host,
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
+            'charset' => $charset,
+            'prefix' => $prefix,
+            'port' => $port,
         ];
         if ($driver == 'mysql') {
             $conn['collation'] = $collation;
@@ -68,7 +64,7 @@ trait connector {
         $driver = $connector_params['driver'];
 
         //get current database else connect to remote
-        if ($driver == 'default'|| $driver == "") {
+        if ($driver == 'default' || $driver == '') {
             $default_database = config('database.default');
             $default_connector = config('database.connections.'.$default_database);
             $driver = $default_connector['driver'];
@@ -80,7 +76,7 @@ trait connector {
             $username = (isset($default_connector['username'])) ? $default_connector['username'] : '';
             $password = (isset($default_connector['password'])) ? $default_connector['password'] : '';
             $database = $default_connector['database'];
-            $port     = (isset($default_connector['port']))? $default_connector['port'] : '';
+            $port = (isset($default_connector['port'])) ? $default_connector['port'] : '';
         } else {
             $fields = ['driver', 'hostname', 'database', 'username', 'password', 'port'];
             foreach ($fields as $field) {
@@ -88,6 +84,7 @@ trait connector {
             }
         }
         $this->db_socket($driver, $hostname, $database, $username, $password, $port);
+
         return true;
     }
 
@@ -101,6 +98,7 @@ trait connector {
     public function check_db_connection(array $connection_params)
     {
         $this->_connector($connection_params);
+
         return true;
     }
 }
