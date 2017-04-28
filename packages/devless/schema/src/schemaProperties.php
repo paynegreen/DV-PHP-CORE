@@ -19,16 +19,4 @@ trait schemaProperties
         'base64' => 'binary',
     ];
 
-    public $dbActionAssoc = [
-        'GET' => 'query',
-        'POST' => 'create',
-        'PATCH' => 'update',
-        'DELETE' => 'delete',
-    ];
-    private $dbActionMethod = [
-        'GET' => 'db_query',
-        'POST' => 'add_data',
-        'PATCH' => 'update',
-        'DELETE' => 'destroy',
-    ];
 }

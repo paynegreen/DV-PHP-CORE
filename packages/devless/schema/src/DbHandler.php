@@ -12,6 +12,22 @@ class DbHandler
     schemaProperties, addData, updateData, destroyData,
     queryData, createTable;
 
+    private $dbActionMethod = [
+        'GET' => 'db_query',
+        'POST' => 'add_data',
+        'PATCH' => 'update',
+        'DELETE' => 'destroy',
+    ];
+
+    
+    public $dbActionAssoc = [
+        'GET' => 'query',
+        'POST' => 'create',
+        'PATCH' => 'update',
+        'DELETE' => 'delete',
+    ];
+   
+
     /**
      * Access db functions based on request method type.
      *
@@ -42,6 +58,7 @@ class DbHandler
     public function store(Request $request)
     {
         $this->create_schema($request['resource']);
+
     }
 
     /**
@@ -67,6 +84,21 @@ class DbHandler
         $payload['user_id'] = $user_id;
 
         return $payload;
+    }
+
+    private function connect_to_db($payload)
+    {
+        $this->_connector($payload);
+
+        return \DB::connection('DYNAMIC_DB_CONFIG');
+    }
+
+    private function check_table_existence($service, $table)
+    {
+        if (!\Schema::connection('DYNAMIC_DB_CONFIG')->
+            hasTable($service.'_'.$table)) {
+            Helper::interrupt(634);
+        }
     }
 
     /**

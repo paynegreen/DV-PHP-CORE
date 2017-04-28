@@ -31,13 +31,22 @@ trait queryParamList
     {
         $complete_query = $complete_query
                         .'->orderByRaw("RAND()")';
-        unset($payload['params']['randomize']);
     }
 
-    private function related(&$complete_query, &$payload, &$queried_table_list)
+    private function related(&$complete_query, &$payload, $table_name, &$related_fetch  )
     {
+        $related_set = true;
+        $service_name = $payload['service_name'];
         $queried_table_list = $payload['params']['related'];
-        unset($payload['params']['related']);
+
+        $related_fetch = function ($results) use ($queried_table_list, $service_name, $table_name, $payload) {
+                    return $this->_get_related_data(
+                        $payload,
+                        $results,
+                        $table_name,
+                        $queried_table_list
+                    );
+                };
     }
 
     private function search(&$complete_query, &$payload)
@@ -48,13 +57,34 @@ trait queryParamList
         foreach ($search_words as $search_word) {
             $complete_query = $complete_query.'->orWhere("'.$search_key.'","LIKE","%'.$search_word.'%")';
         }
-        unset($payload['params']['search']);
     }
 
     private function orderBy(&$complete_query, &$payload)
     {
         $complete_query = $complete_query
                         .'->orderBy("'.$payload['params']['orderBy'][0].'" )';
-        unset($payload['params']['orderBy']);
+    }
+
+    private function where(&$complete_query, $payload)
+    {
+        $this->where_and_orWhere_builder('where', $complete_query, $payload);   
+    }
+
+    private function orWhere(&$complete_query, $payload) {
+        $this->where_and_orWhere_builder('orWhere', $complete_query, $payload);
+    }
+
+    private function where_and_orWhere_builder($whereType, &$complete_query, $payload)
+    {
+           foreach ($payload['params'][$whereType] as $one) {
+            $query_params = explode(',', $one);
+            if (isset($query_params[1], $query_params[0])) {
+                $complete_query = $complete_query.
+                '->'.$this->query_params[$whereType].'("'.$query_params[0].
+                '","'.$query_params[1].'")';
+            } else {
+                Helper::interrupt(612);
+            }
+        } 
     }
 }
