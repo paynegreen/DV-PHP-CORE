@@ -25,7 +25,7 @@ trait addData
         $this->validate_payload($payload);
 
         if ($this->add_data_to_db($payload, $service_name, $table_name, $db)){
-            return $this->add_response($table_name);
+            return $this->addDataResponses($table_name);
         }
     }
 
@@ -41,13 +41,14 @@ trait addData
                 true
             );
 
-            $this->set_user_id($payload['user_id']);
+            //assigning autheticated user id
+            $table_data[0]['devless_user_id'] = $payload['user_id'];
             $output = $db->table($service_name.'_'.$table['name'])->insert($table_data);
         }
         return $output;
     }    
    
-    private function add_response($table_name)
+    private function addDataResponses($table_name)
     {
         return Response::respond(609, 'Data has been added to '.$table_name
                 .' table successfully');

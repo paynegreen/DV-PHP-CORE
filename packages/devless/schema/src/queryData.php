@@ -36,7 +36,7 @@ trait queryData
         $base_query = '$db->table("'.$table_name.'")';
 
          ($payload['user_id'] !== '') ?
-        $complete_query = $complete_query.'->where("devless_user_id",'.$payload['user_id'].')' : ''; 
+        $complete_query = $base_query.'->where("devless_user_id",'.$payload['user_id'].')' : ''; 
 
         $complete_query = $this->set_query_options(
             $base_query,
