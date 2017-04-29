@@ -53,7 +53,7 @@ trait queryData
              return $queried_results = $related_fetch($results);
         });'):eval('$queried_results = '.$complete_query.'->get();');
         
-        return $this->respondWithQueryData($queried_results, $count);
+        return $this->respond_with_query_data($queried_results, $count);
         
     }
 
@@ -73,7 +73,7 @@ trait queryData
         return $complete_query;
     }
 
-    private function respondWithQueryData($results, $total_count)
+    private function respond_with_query_data($results, $total_count)
     {
         return Response::respond(625, null, [
             'results' => $results,
