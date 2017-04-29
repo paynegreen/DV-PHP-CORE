@@ -1,15 +1,11 @@
 <?php
-
 namespace App\Helpers;
-
 use App\Http\Controllers\ServiceController;
 use Session;
 use Devless\SDK\SDK;
-
 /*
 * @author Eddymens <eddymens@devless.io
 */
-
 class DevlessHelper extends Helper
 {
     use serviceHelper, authHelper, directoryHelper;
@@ -31,11 +27,9 @@ class DevlessHelper extends Helper
         (isset($custom_colors[$message_color])) ? $notification_color =
             $custom_colors[$message_color]
             : $notification_color = $message_color;
-
         session::flash('color', $notification_color);
         session::flash('flash_message', $message);
     }
-
     /**
      * Delete table is exists.
      *
@@ -47,10 +41,8 @@ class DevlessHelper extends Helper
     public static function purge_table($serviceName, $tableName)
     {
         $service = new ServiceController();
-
         return DataStore::service($serviceName, $tableName, $service)->drop() ? true : false;
     }
-
     /**
      * convert string to json.
      *
@@ -64,10 +56,8 @@ class DevlessHelper extends Helper
     public static function convert_to_json($incomingArray)
     {
         $formatted_json = json_encode($incomingArray, true);
-
         return $formatted_json;
     }
-
     /**
      * Check method access type.
      *
@@ -78,21 +68,17 @@ class DevlessHelper extends Helper
     {
         $property = $class->getMethod($method);
         $docComment = $property->getDocComment();
-
         $access_type = function () use ($docComment) {
             (strpos(($docComment), '@ACL private')) ? Helper::interrupt(627) :
                 (strpos($docComment, '@ACL protected')) ? Helper::get_authenticated_user_cred(2) :
                     (strpos($docComment, '@ACL public')) ? true : Helper::interrupt(638);
         };
-
         $access_type();
     }
-
     public static function instance_log($url, $token, $purpose)
     {
         $sdk = new SDK($url, $token);
         $instance = DataStore::instanceInfo();
-
         $user = $instance['admin'];
         $app = $instance['app'];
         $data = [
@@ -104,7 +90,6 @@ class DevlessHelper extends Helper
           'purpose' => $purpose,
         ];
         $status = $sdk->addData('INSTANCE_LOG', 'instance', $data);
-
         return ($status['status_code'] == 609) ? true : false;
     }
 }

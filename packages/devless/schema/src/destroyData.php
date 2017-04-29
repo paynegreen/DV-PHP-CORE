@@ -9,6 +9,7 @@ use App\Http\Controllers\ServiceController as Service;
 
 trait destroyData
 {
+    use deleteParamList;
     /**
      * Remove the specified resource from storage.
      *
@@ -20,11 +21,11 @@ trait destroyData
      */
     public function destroy($payload)
     {
-        $this->_connector($payload);
-        $db = \DB::connection('DYNAMIC_DB_CONFIG');
+        $db = $this->connect_to_db($payload);
         //check if table name is set
         $service_name = $payload['service_name'];
         $table = $payload['params'][0]['name'];
+        $param_list = $payload['params'][0]['params'][0];
 
         //remove service appendage from service
         if (($pos = strpos($table, $service_name.'_')) !== false) {
@@ -36,27 +37,16 @@ trait destroyData
         $table_name = ($tableWithoutService == $payload['params'][0]['name'])
             ? $service_name.'_'.$tableWithoutService :
             $payload['params'][0]['name'];
-        if (!\Schema::connection('DYNAMIC_DB_CONFIG')->
-        hasTable($table_name)) {
-            Helper::interrupt(634);
-        }
+        
+        $this->check_table_existence($service_name, $table);
+        
 
-        if ($payload['user_id'] !== '') {
-            $user_id = $payload['user_id'];
-            $destroy_query = '$db->table("'.$table_name.'")->where("devless_user_id",'.$user_id.')';
-        } else {
-            $destroy_query = '$db->table("'.$table_name.'")';
-        }
-        if (isset($payload['params'][0]['params'][0]['drop'])) {
-            if ($payload['params'][0]['params'][0]['drop'] == true) {
-                \Schema::connection('DYNAMIC_DB_CONFIG')->dropIfExists($table_name);
-                (Helper::is_admin_login()) ?
-                    \DB::table('table_metas')->where('table_name', $table_name)->delete() : Helper::interrupt(620);
+        $destroy_base_query = '$db->table("'.$table_name.'")';
+        $destroy_query = $this->check_userbased_destroy($payload, $destroy_base_query);
+        dd($param_list);
+        
+        $this->drop_table($payload, $table_name, $task);
 
-                return Response::respond(613, 'dropped table successfully');
-                $task = 'drop';
-            }
-        }
         if (isset($payload['params'][0]['params'][0]['where'])) {
             if ($payload['params'][0]['params'][0]['where'] == true) {
                 $where = $payload['params'][0]['params'][0]['where'];
@@ -89,5 +79,15 @@ trait destroyData
         }
 
         return Response::respond(636, 'The table or field has been '.$task);
+    }
+
+    private function check_userbased_destroy($payload, $base_query)
+    {
+        if ($payload['user_id'] !== '') {
+            $user_id = $payload['user_id'];
+            return $base_query.'->where("devless_user_id",'.$user_id.')';    
+        }
+        return $base_query;
+        
     }
 }
