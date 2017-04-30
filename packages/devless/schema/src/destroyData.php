@@ -26,7 +26,7 @@ trait destroyData
         $service_name = $payload['service_name'];
         $table = $payload['params'][0]['name'];
         $param_list = $payload['params'][0]['params'][0];
-
+        $task = $tasked = null;
         //remove service appendage from service
         if (($pos = strpos($table, $service_name.'_')) !== false) {
             $tableWithoutService = substr($table, $pos + 1);
@@ -43,42 +43,34 @@ trait destroyData
 
         $destroy_base_query = '$db->table("'.$table_name.'")';
         $destroy_query = $this->check_userbased_destroy($payload, $destroy_base_query);
-        dd($param_list);
-        
-        $this->drop_table($payload, $table_name, $task);
-
-        if (isset($payload['params'][0]['params'][0]['where'])) {
-            if ($payload['params'][0]['params'][0]['where'] == true) {
-                $where = $payload['params'][0]['params'][0]['where'];
-                $where = str_replace(',', "','", $where);
-                $where = "'".$where."'";
-                $destroy_query = $destroy_query.'->where('.$where.')';
-                $task = 'failed';
-            }
-        }
         $element = 'row';
-        if (isset($payload['params'][0]['params'][0]['truncate'])) {
-            if ($payload['params'][0]['params'][0]['truncate'] == true) {
-                $destroy_query = $destroy_query.'->truncate()';
-                $tasked = 'truncated';
-                $task = 'truncate';
-            }
-        } elseif (isset($payload['params'][0]['params'][0]['delete'])) {
-            if ($payload['params'][0]['params'][0]['delete'] == true) {
-                $destroy_query = $destroy_query.'->delete()';
-                $tasked = 'deleted';
-                $task = 'delete';
-            }
-        } else {
-            Helper::interrupt(615);
+        
+        $output = $this->drop_table($param_list, $table_name, $task, $tasked);
+        
+        if($tasked =='dropped') {
+            return $output;
         }
-        $destroy_query = $destroy_query.';';
-        $result = eval('return'.$destroy_query);
-        if ($result == 0) {
+        $this->set_id_of_record_to_delete($param_list, $destroy_query, $task);
+        $this->truncate_table($param_list, $destroy_query, $task, $tasked);
+        $this->delete_record_from_table($param_list, $destroy_query, $task, $tasked);
+        
+        $result = eval('return '.$destroy_query.';');
+
+        (is_object($result))?Helper::interrupt(615):false;
+
+        return $this->response_from_delete_action($result, $task);
+        
+    }
+
+    private function response_from_delete_action($result, $task)
+    {
+         $element = 'row';
+         
+         if ($result == 0 && !$result == "null") {
             Helper::interrupt(614, 'could not '.$task.' '.$element);
         }
 
-        return Response::respond(636, 'The table or field has been '.$task);
+        return Response::respond(636, 'The table or field has been '.$task);   
     }
 
     private function check_userbased_destroy($payload, $base_query)
@@ -90,4 +82,6 @@ trait destroyData
         return $base_query;
         
     }
+
+
 }
