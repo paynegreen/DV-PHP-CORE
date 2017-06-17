@@ -28,7 +28,7 @@ class Config
         $smsConfig = \DB::table('notify_sms_config')->get();
         $emailConfig = \DB::table('notify_email_config')->get();
         $pushConfig = \DB::table('notify_push_config')->get();
-        //dd($smsConfig, $emailConfig, $pushConfig);
+
         $smsConfig = (!empty($smsConfig)) ? $smsConfig[0] : (object)[];      
         $emailConfig = (!empty($emailConfig)) ? $emailConfig[0] : (object)[];      
         $pushConfig = (!empty($pushConfig)) ? $pushConfig[0] : (object)[];      
