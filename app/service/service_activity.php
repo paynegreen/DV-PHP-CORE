@@ -67,14 +67,15 @@ trait service_activity
      */
     private function _get_resource_access_right($service, $master_access = false)
     {
+
         $master_resource_rights = ['query' => 1, 'update' => 1,
-             'delete' => 1, 'script' => 1, 'schema' => 1, 'script' => 1, 'create' => 1, ];
+             'delete' => 1, 'script' => 1, 'schema' => 1, 'script' => 1, 'create' => 1, 'view' => 1];
 
         $resource_access_right = $service->resource_access_right;
         $resource_access_right = json_decode($resource_access_right, true);
         $resource_access_right = ($master_access) ?
             $master_resource_rights : $resource_access_right;
-
+            
         return $resource_access_right;
     }
 
@@ -104,43 +105,63 @@ trait service_activity
      * operations to execute before assigning action to resource.
      *
      * @param string $resource
-     * @params array $payload
+     * @param array $payload
      *
      * @return array
      */
-    public function before_assigning_service_action($resource, $payload, $internalAccess = false)
+    public function before_assigning_service_action($resource, $payload)
     {
+        $payload['request_phase'] = 'before';
         $output['resource'] = $resource;
         $output['payload'] = $payload;
-        if ($resource != 'schema' && !$internalAccess) {
+
+        $script_output = $this->script_executioner($resource, $payload);
+
+        return ($script_output)?:$output;
+
+    }
+
+    /**
+     * operations to execute after resource processes order.
+     *
+     * @param string $resource
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function after_resource_process_order($resource, $requestPayload, $status_code, $message, $payload)
+    {
+        
+        $requestPayload['request_phase'] = 'after';
+        $requestPayload['response_status_code'] = $status_code;
+        $requestPayload['response_message'] = $message;
+        $requestPayload['response_payload'] = $payload;
+        $script_output = $this->script_executioner($resource, $requestPayload, $internalAccess = false);
+        
+        return ($script_output)?:['status_code' => $status_code, 'message'=> $message, 'payload' => $payload];
+    }
+
+
+    /**
+     * script execution engine 
+     *
+     * @param string $resource
+     * @param array $payload
+     * @param bol   $internalAccess
+     * @return array
+     */
+    public function script_executioner($resource, $payload)
+    {
+         $output = false;
+
+         if ($resource != 'schema' ) {
             $script = new script();
+
             $output = $script->run_script($resource, $payload);
+            
         }
 
         return $output;
     }
-
-    /**
-     * Initialize variables in Rules.
-     *
-     * @param $code
-     *
-     * @return string
-     */
-    public function var_init($code)
-    {
-        $declarationString = '';
-        $tokens = token_get_all('<?php '.$code);
-        foreach ($tokens as $token) {
-            if (is_array($token)) {
-                $start = 1;
-                if ($token[0] == 312) {
-                    $variable = substr($token[1], $start);
-                    $declarationString .= "$$variable = null;";
-                }
-            }
-        }
-
-        return $declarationString;
-    }
+    
 }

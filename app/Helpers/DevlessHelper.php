@@ -82,6 +82,7 @@ class DevlessHelper extends Helper
         $docComment = $property->getDocComment();
 
         $access_type = function () use ($docComment) {
+            if(self::is_admin_login()){return true;}
             (strpos(($docComment), '@ACL private')) ? Helper::interrupt(627) :
                 (strpos($docComment, '@ACL protected')) ? Helper::get_authenticated_user_cred(2) :
                     (strpos($docComment, '@ACL public')) ? true : Helper::interrupt(638);
@@ -179,5 +180,35 @@ class DevlessHelper extends Helper
         }
 
         return $closest_word;
+    }
+    /**
+     * Script template generated for rules in each new service
+     * @return string
+     */
+    public static function script_template()
+    {
+        return 
+                '
+/**
+* All service db request pass through here before and after db actions are made
+* This makes it possible to modify  either the request or response to your satisfaction
+* Learn more about how to do this from the docs 
+**/
+ -> beforeQuerying()
+ -> beforeUpdating()
+ -> beforeDeleting()
+ -> beforeCreating()
+
+ -> onQuery()
+ -> onUpdate()
+ -> onDelete()
+ -> onCreate()
+
+ -> afterQuerying()
+ -> afterUpdating()
+ -> afterDeleting()
+ -> afterCreating()
+ ';
+ 
     }
 }

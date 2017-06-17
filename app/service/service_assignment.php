@@ -33,12 +33,14 @@ trait service_assignment
         $parameters = null,
         $internal_access = false
     ) {
+
         $current_service = $this->service_exist($service_name);
         if (!$current_service == false) {
             //check service access right
             $is_it_public = $current_service->public;
             $is_admin = Helper::is_admin_login();
-            $accessed_internally = $internal_access;
+            
+            $accessed_internally = ($is_admin)?:$internal_access;
             if ($is_it_public == 0 || $is_admin == true) {
                 $resource_access_right =
                   $this->_get_resource_access_right($current_service, $accessed_internally);
@@ -60,19 +62,28 @@ trait service_assignment
                         'method' => $method,
                         'params' => $parameters,
                     ];
+
                 // run script before assigning to method
-                if (!$internal_access && $resource != 'view' && $resource != 'rpc') {
-                    $newServiceElements = $this->before_assigning_service_action($resource, $payload, $accessed_internally);
+                if ( $resource != 'view' && $resource != 'rpc') {
+                    $newServiceElements = $this->before_assigning_service_action($resource, $payload);
+                    
                     $resource = $newServiceElements['resource'];
                     $payload = $newServiceElements['payload'];
-                }
 
+                }
+                
                 //keep names of resources in the singular
                 switch ($resource) {
                     case 'db':
                         $db = new Db();
 
-                        return $db->access_db($payload);
+                        $response = $db->access_db($payload);
+                        if ( $resource != 'view' && $resource != 'rpc') {
+                              return $this->after_resource_process_order($resource, $payload, $response['status_code'], $response['message'], $response['payload']);
+
+                        } 
+                        return $response;
+                      
                         break;
                     case 'schema':
                         $db = new Db();
@@ -86,11 +97,18 @@ trait service_assignment
                         $rpc = new Rpc();
 
                         return $rpc->index($payload);
+                    case 'endNow':
+                        return [
+                            'status_code' => $payload['status_code'],
+                            'message' => $payload['message'],
+                            'payload' => $payload['results'],
+                        ];
                     default:
                         Helper::interrupt(605);
                         break;
                 }
             } else {
+
                 Helper::interrupt(624);
             }
         }

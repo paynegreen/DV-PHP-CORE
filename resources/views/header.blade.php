@@ -6,7 +6,8 @@
     <meta name="description" content="DevLess is a backend as a service framework that provide developers an easier way to rollout their web and mobile platform ">
     <meta name="author" content="DevLess">
     <meta name="keyword" content="DevLess, opensource, BAAS, Backend as a service, robust, php, laravel ">
-    <link rel="shortcut icon" href="favico.png" type="image/png">
+    
+    <link rel="shortcut icon" href="/favico.png" type="image/png">
 
     <title>DevLess {{config('devless')['version']}}</title>
 
@@ -21,6 +22,7 @@
 
     <!-- datatables css -->
     <link href="{{ Request::secure(Request::root()).'/css/jquery.dataTables.min.css'  }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css" rel="stylesheet">
 
     <!--common style-->
     <link href="{{ Request::secure(Request::root()).'/css/style.css' }}" rel="stylesheet">
@@ -44,7 +46,8 @@
           <!--toggle button start-->
           <a class="toggle-btn"><i class="fa fa-outdent"></i></a>
           <br>
-          <button class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#quick-guide" style="margin-right: 20%"><i class="fa fa-book"></i> Quick Guide</button>
+          <button class="btn btn-sm btn-info pull-right" data-toggle="modal" data-target="#sdk-connect" style="margin-right: 20%"> <i class="fa fa-plug"></i> Connect to App</button>
+          <button class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#quick-guide" style="margin-right: 2%"><i class="fa fa-book"></i> Quick Guide</button>
           <!--toggle button end-->
         </div>
         <!-- header section end-->
@@ -71,6 +74,22 @@
                         <a href="#" target="_blank" class="btn btn-primary">Watch it all <i class="fa fa-video-camera"></i></a>
                        <a href="https://docs.devless.io/docs/1.0/html-sdk" target="_blank" class="btn btn-primary">Learn More <i class="fa fa-book"></i></a>
 
+                   </div>
+               </div>
+           </div>
+       </div>
+       <div class="modal fade" id="sdk-connect" tabindex="-1" role="dialog" aria-labelledby="quickGuideLabel">
+           <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                       <h4 class="modal-title" id="myModalLabel"><i class="fa fa-plug"></i> SDK Options</h4>
+                   </div>
+                   <div class="modal-body">
+                        
+                     </div>
+                   <div class="modal-footer">
+                    // TODO provide links to how to use each SDK to access and work with DevLess 
                    </div>
                </div>
            </div>

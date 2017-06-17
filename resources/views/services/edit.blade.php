@@ -129,7 +129,7 @@
         </div>
         <div  class="form-group">
             <div style="display:block;" >
-            <label forƒ="field-reference">Reference Table</label>
+            <label forƒ="field-reference">Referenced Table</label>
             <select class="form-control"  name="field-reference" id="field-reference" >
                 <option value="none" selected>None</option>
                 @foreach($table_meta as $table_data)

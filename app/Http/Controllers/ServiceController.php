@@ -28,8 +28,8 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::orderBy('id', 'desc')->paginate(10);
-
-        return view('services.index', compact('services'));
+        $menuName = 'all_services';
+        return view('services.index', compact('services', 'menuName'));
     }
     /**
      * Show the form for creating a new resource.
@@ -38,7 +38,8 @@ class ServiceController extends Controller
      */
     public function create()
     {
-        return view('services.create');
+        $menuName = 'all_services';
+        return view('services.create', compact('menuName'));
     }
     /**
      * Store a newly created resource in storage.
@@ -78,13 +79,7 @@ class ServiceController extends Controller
         $service->resource_access_right =
             '{"query":1,"create":1,"update":1,"delete":1,"schema":0,"script":0, "view":0}';
         $service->active = 1;
-        $service->script = 'use App\Helpers\Assert as Assert;
- $rules
- -> onQuery()
- -> onUpdate()
- -> onDelete()
- -> onCreate()
- ';
+        $service->script = DLH::script_template();
         $db = new Db();
         if (!$db->check_db_connection($connection)) {
             DLH::flash('Sorry connection could not be made to Database', 'error');
@@ -131,8 +126,8 @@ class ServiceController extends Controller
             $table_meta[$count] = (json_decode($each_table_meta->schema, true));
             ++$count;
         }
-
-        return view('services.edit', compact('service', 'table_meta', 'id'));
+        $menuName = 'all_services';
+        return view('services.edit', compact('service', 'table_meta', 'id', 'menuName'));
     }
     /**
      * Update the specified resource in storage.
@@ -149,9 +144,11 @@ class ServiceController extends Controller
                 $script = $request->input('script');
                 $service_name = $service->name;
                 $db = new DataStore();
-                $var_init = $this->var_init($script);
-                $service->script_init_vars = $var_init;
-                $service->script = $script;
+                $scriptHandler = new script();
+                $compiled_script  = $scriptHandler->compile_script($script);
+                $service->script_init_vars = $compiled_script['var_init'];
+                $service->script = $compiled_script['script'];
+                //create special field for uncompiled scripts 
 
                 $service->save();
 
@@ -203,7 +200,7 @@ class ServiceController extends Controller
         } else {
             DLH::flash('Service could not be deleted', 'error');
         }
-
+        
         return redirect()->route('services.index');
     }
 

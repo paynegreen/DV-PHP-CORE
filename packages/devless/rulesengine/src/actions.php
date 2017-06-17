@@ -41,11 +41,9 @@
             }
 
             $msg  = (is_array($msg))? json_encode($msg):$msg;
-            $evaluator = function () use ($msg) {
-                return Helper::interrupt(1000, $msg);
-            };
-
-            return $this->executor($evaluator);
+            Helper::interrupt(1000, $msg);
+            return $this;
+            
         }
 
         /**
@@ -61,11 +59,8 @@
                 return $this;
             }
             $msg  = (is_array($msg))? json_encode($msg):$msg;
-            $evaluator = function () use ($msg) {
-                return Helper::interrupt(1001, $msg);
-            };
-
-            return $this->executor($evaluator);
+            Helper::interrupt(1001, $msg);
+            return $this;
         }
         /**
          * Call on an ActionClass.
@@ -81,18 +76,55 @@
             if (!$this->execOrNot) {
                 return $this;
             }
-            $evaluator = function () use ($service, $method, $params, $remoteUrl, $token) {
-                if ($remoteUrl && $token) {
-                    $this->results = ActionClass::remoteExecute($service, $method, $params, $remoteUrl, $token);
-                } else {
-                    $this->results = ActionClass::execute($service, $method, $params);
-                }
-                $this->answered = true;
+            
+            $params = ($params) ? $params : [];
+            if ($remoteUrl && $token) {
+                $this->results = ActionClass::remoteExecute($service, $method, $params, $remoteUrl, $token);
+            } else {
+                $this->results = ActionClass::execute($service, $method, $params);
+            }
+            
+            return $this;
 
-                return true;
-            };
+        }
 
-            return $this->executor($evaluator);
+        /**
+         * Make remote requests
+         *
+         * @param  STRING $method
+         * @param  STRING $url
+         * @param  JSON $data
+         *
+         * @return $this
+         */
+        public function makeExternalRequest($method, $url, $data='{}', $headers=[])
+        {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => $url,
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => strtoupper($method),
+              CURLOPT_POSTFIELDS => $data,
+              CURLOPT_HTTPHEADER => $headers,
+            ));
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              $this->results = $err;
+            } else {
+                $this->results =  json_decode($response, true);
+
+            }
+            return $this;
         }
         /**
          * Get results variable and set to variable.
@@ -103,7 +135,23 @@
          */
         public function getRunResult(&$input_var)
         {
+            if (!$this->execOrNot) {
+                return $this;
+            }
             $this->to($input_var);
+            return $this;
+        }
+
+        /**
+         * Get results variable and set to variable.
+         *
+         * @param $input_var
+         *
+         * @return $this
+         */
+        public function storeAs(&$input_var)
+        {
+            $this->getRunResult($input_var);
             return $this;
         }
 
@@ -116,8 +164,13 @@
          */
         public function assign($input)
         {
+            if (!$this->execOrNot) {
+                return $this;
+            }
             $this->results = $input;    
+            return $this;
         }
+
 
         /**
          * Get results variable and set to variable.
@@ -137,6 +190,23 @@
         }
 
         /**
+        * Get results variable and set to variable.
+         *
+         * @param $output
+         *
+         * @return $this
+         */
+        public function from($output)
+        {
+            if (!$this->execOrNot) {
+                return $this;
+            }
+
+            $this->assign($output);
+            return $this;
+        }
+
+        /**
          * Assign $input to $output 
          *
          * @param $input
@@ -146,7 +216,34 @@
          */
         public function assignValues(&$input, &$output)
         {
+            if (!$this->execOrNot) {
+                return $this;
+            }
+
             $output = $input;    
             return $this;
         }
+
+        /**
+         * Stop execution and output results
+         *
+         * @param $status_code
+         * @param $message 
+         * @param $payload 
+         *
+         * @return $this
+         */
+        public function stopAndOutput($status_code, $message, $payload)
+        {
+            if (!$this->execOrNot) {
+                return $this;
+            }
+            
+            $this->request_phase = 'endNow';
+            $this->status_code = $status_code;
+            $this->message = $message;
+            $this->payload = $payload;
+            return $this;
+        }
+
     }

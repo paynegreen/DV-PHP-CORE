@@ -133,7 +133,28 @@ class devless
         
        
     }
-    
+
+    /**
+     * reset user account password
+     * @ACL public
+    */
+    public function reset_users_password($token)
+    {
+        $auth = $this->auth;
+        $state  = $auth->reset_users_password($token);
+        return $state;
+    }
+
+    /**
+     * verify newly registered emails
+     * @ACL public
+    */
+    public function verify_users_email($token)
+    {
+        $user_id = DS::getDump($token.'_'.$user_id);
+        $status  = (\DB::table('users')->where('id', $user_id)->update(['status'=>1]))?true:false;
+        return $status;
+    }
     private static function getSetParams($payload)
     {
         foreach ($payload as $key => $value) {
@@ -225,5 +246,18 @@ class devless
             return (array)$profile[0];
         }
         return [];
+    }
+
+    /**
+     * Get all users within the system 
+     * @return array
+     * @ACL private
+     */
+    public function getAllUsers()
+    {
+        return DB::table('users')->select(
+            [
+                "id", "username", "email", "first_name", "last_name", "status"
+            ])->get();
     }
 }
