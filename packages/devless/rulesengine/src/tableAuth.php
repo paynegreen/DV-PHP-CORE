@@ -47,7 +47,7 @@ trait tableAuth
      *
      * @return instance
      */
-    public function allowEnternalAcess()
+    public function allowExternalAccess()
     {
         if (!$this->execOrNot) {
             return $this;

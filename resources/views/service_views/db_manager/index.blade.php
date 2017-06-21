@@ -12,5 +12,5 @@
 	alert("You will be redirected to the DB interface please just hit `login` to get access to your database, or change the connection details to use another database");
 </script>
 
-<?=DvRedirect("http://localhost:6060/service/db_manager/view/db/?username=$username&password=$password&db=$database&server=$server&driver=$driver
+<?=DvRedirect(url('/')."/service/db_manager/view/db/?username=$username&password=$password&db=$database&server=$server&driver=$driver
 ", 0);?>
