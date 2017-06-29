@@ -5,9 +5,7 @@ namespace Devless\RulesEngine;
 trait date 
 {
 	/**
-     * get timestamp.
-     *
-     *
+     * The `getTimestamp` method returns the current timestamp. eg: beforeQuerying()->getTimestamp()->storeAs($timestamp)->succeedWith($timestamp)
      * @return $this
      */
 	public function getTimestamp()
@@ -15,14 +13,12 @@ trait date
 		if (!$this->execOrNot) {
                 return $this;
         }
-
-        $date = new \DateTime();
-		$this->results = $date->getTimestamp();
+		$this->results = time();
         return $this;
 	}
 
 	/**
-     * get current year.
+     * Get the current year using the `getCurrentYear` method eg:beforeQuering()->getCurrentYear()->storeAs($currentYear)succeedWith($currentYear)
      *
      * @return $this
      */
@@ -36,7 +32,7 @@ trait date
 	}
 
 	/**
-     * get current month.
+     *Get the current month using the `getCurrentMonth` method eg:beforeQuering()->getCurrentMonth()->storeAs($currentMonth)->succeedWith($currentMonth)
      *
      * @return $this
      */
@@ -50,7 +46,7 @@ trait date
 	}
 
 	/**
-     * get current day.
+     * Get the current day using the `getCurrentDay` method eg:beforeQuering()->getCurrentDay()->storeAs($currentDay)->succeedWith($currentDay)
      *
      * @return $this
      */
@@ -64,7 +60,7 @@ trait date
 	}
 
 	/**
-     * get current hour.
+     Get the current hour using the `getCurrentHour` method eg:beforeQuering()->getCurrentHour()->storeAs($currentHour)->succeedWith($currentHour)
      *
      * @return $this
      */
@@ -78,7 +74,7 @@ trait date
 	}
 
 	/**
-     * get current minute.
+     * Get the current minute using the `getCurrentMinute` method eg:beforeQuering()->getCurrentMinute()->storeAs($currentMinute)->succeedWith($currentMinute)
      *
      * @return $this
      */
@@ -92,7 +88,7 @@ trait date
 	}
 
 	/**
-     * get current second.
+    * Get the current second using the `getCurrentSecond` method eg:beforeQuering()->getCurrentSecond()->storeAs($currentSecond)->succeedWith($currentSecond)
      *
      * @return $this
      */
@@ -106,11 +102,11 @@ trait date
 	}
 
 	/**
-     * get current datetime.
+     * Get the current second using the `getFormattedDate` method eg:beforeQuering()->getFormattedDate()->storeAs($formattedDate)->succeedWith($formatedDate)
      *
      * @return $this
      */
-	public function getFormatedDate()
+	public function getFormattedDate()
 	{
 		if (!$this->execOrNot) {
                 return $this;

@@ -67,7 +67,7 @@ trait auth
         } elseif ($user_token != null && $user_token != 'null' &&
                 ($force_auth == true || $force_auth == false)) {
             $user_data = self::verify_user_token($user_token, $force_auth);
-
+            
             if (isset($user_data->id)) {
                 $user_cred =
                     [
@@ -75,13 +75,12 @@ trait auth
                         'token' => $user_data->session_token,
 
                     ];
-            } else {
+            } elseif($force_auth) {
                 self::interrupt(628, null, [], true);
             }
         } elseif ($force_auth == true) {
             self::interrupt(628, null, [], true);
         }
-
         return $user_cred;
     }
 
@@ -125,7 +124,6 @@ trait auth
             $user_data->session_time = self::session_timestamp();
             $user_data->save();
         }
-
         return $user_data;
     }
 }

@@ -96,6 +96,7 @@ EOT;
             extract($EVENT['params'], EXTR_PREFIX_ALL, 'input');
             $rules->accessRights = $EVENT['access_rights'];
             $rules->EVENT['user_id'] = $EVENT['user_id'];
+            
             $rules->request_phase = ($EVENT['request_phase'] == 'after')?'after':'before';
             if($rules->request_phase == 'after') {
                 $rules->status_code = $EVENT['status_code'];
@@ -105,7 +106,7 @@ EOT;
             
             
             
-            $imports = "use App\Helpers\Assert as AssertIts;";
+            $imports = "use App\Helpers\Assert as assertIts;use App\Helpers\Assert as  assertIt;";
             $headers = $imports.' $rules';
             $footer  = '';
             $finalCode = (strpos($code, 'use App\Helpers\Assert')!==false)? $code : $headers.$code.$footer;
@@ -130,8 +131,8 @@ EOT;
         if (isset($payload['params'][0]['field'])) {
             $payload['params'][0]['field'][0] = $params;
         }
-         
-         //(strtolower(error_get_last()['file']) != 'unknown' )?dd():'';
+    
+         (strpos(error_get_last()['file'], 'ScriptHandler.php') !=false)?dd():'';
 
         if($EVENT['request_phase'] == 'after') {
             $results['status_code'] = $EVENT['status_code'];

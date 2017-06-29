@@ -16,15 +16,14 @@ trait messageStack
     public static $MESSAGE_HEAP =
     [
         //JSON HEAP
-        400 => 'Sorry something went wrong with payload(check json format)',
+        400 => 'Sorry something went wrong with payload(check JSON format)',
         //SCHEMA HEAP
-        500 => 'first schema error',
         // error code for custom messages
         600 => 'Data type does not exist',
-        601 => 'Reference column column name does not exist',
+        601 => 'Reference column name does not exist',
         602 => 'Database schema could not be created',
         603 => 'Table could not be created',
-        604 => 'Service  does not exist or is not active',
+        604 => 'Service does not exist or you just misspelt it. Also be sure the service is set to active',
         605 => 'No such resource try (rpc db view or schema)',
         606 => 'Created table successfully',
         607 => 'Could not find the right DB method',
@@ -36,7 +35,7 @@ trait messageStack
         613 => 'Database has been deleted successfully',
         614 => 'Parameters `where` or `data`  not set',
         615 => 'Delete action not set ',
-        616 => 'Caught unknown data type',
+        616 => 'There is something wrong with your field',
         617 => 'No such table belongs to the service',
         618 => 'Validator type does not exist',
         619 => 'Table was updated successfully',
@@ -65,6 +64,8 @@ trait messageStack
         642 => 'There is no such method in Rules Engine',
         643 => 'Sorry your account is not active',
         644 => 'Seems user already exist',
+        645 => 'Sorry but you are not logged in as Admin',
+        646 => 'Seems your query params is malformed',
         700 => 'Internal system error',
     ];
 }
