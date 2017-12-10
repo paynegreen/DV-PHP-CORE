@@ -1,5 +1,5 @@
-@if (Request::secure())
-  <link rel="shortcut icon" href="{{ secure_asset('favico.png') }}" type="image/png">
+{{-- @if (Request::secure()) --}}
+  <link rel="shortcut icon" href="{{URL::to('/')}}/favico.png" type="image/png">
 <!--right slidebar-->
   <link href="{{ secure_asset('/css/slidebars.css') }}" rel="stylesheet">
 
@@ -14,15 +14,15 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css" rel="stylesheet">
 
   <!--common style-->
-  <link href="{{ secure_asset('/css/style.css') }}" rel="stylesheet">
+  <link href="{{URL::to('/')}}/css/style.css" rel="stylesheet">
   <link href="{{ secure_asset('/css/style-responsive.css') }}" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/custom.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{URL::to('/')}}/css/custom.css">
   @if( \Request::path() == 'privacy' || \Request::path() == 'datatable' || \Request::path() == 'services')
   <link rel="stylesheet" href="{{ secure_asset('/css/helper.css') }}" media="screen" title="no title" charset="utf-8">
   <script src="{{ secure_asset('/js/jquery-1.10.2.min.js') }}"></script>
   <script src="{{ secure_asset('/js/bootstrap.min.js') }}"></script>
   @endif
-@else
+{{-- @else
 
   <link rel="shortcut icon" href="{{ asset('favico.png') }}" type="image/png">
     <!--right slidebar-->
@@ -48,5 +48,5 @@
   <script src="{{ asset('/js/bootstrap.min.js') }}"></script>
   @endif
 
-@endif
+@endif --}}
 
