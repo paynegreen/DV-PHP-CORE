@@ -1,7 +1,8 @@
 {{-- @if (Request::secure()) --}}
   <link rel="shortcut icon" href="{{URL('/')}}/favico.png" type="image/png">
 <!--right slidebar-->
-  <link href="{{URL('/')}}/css/slidebars.css" rel="stylesheet">
+{{-- <link href="{{URL('/')}}/css/slidebars.css" rel="stylesheet"> --}}
+  <link href="{{Request::secure(Request::path()).'/css/slidebars.css'}}" rel="stylesheet"/>
 
   <!--switchery-->
   <link href="{{URL('/')}}/js/switchery/switchery.min.css" rel="stylesheet" type="text/css" media="screen" />
