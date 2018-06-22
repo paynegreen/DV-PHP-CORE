@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
                     return "<?php echo with{$expression}->format('m/d/Y H:i'); ?>";
                 }
          );
+        
+        // Force SSL in production
+        if ($this->app->environment() == 'production') {
+            URL::forceScheme('https');
+        }
     }
 
     /**
